@@ -42,7 +42,7 @@ function playRound(humanChoice, computerChoice) {
     alert(
       `=== HUMAN WON! ===\nComputer: ${computerChoice}\nHuman: ${humanChoice}\nCOM ${computerScore} - HMN ${humanScore}`
     );
-  } else if (result === "computer") {
+  } else {
     computerScore++;
     alert(
       `=== COMPUTER WON! ===\nComputer: ${computerChoice}\nHuman: ${humanChoice}\nCOM ${computerScore} - HMN ${humanScore}`
