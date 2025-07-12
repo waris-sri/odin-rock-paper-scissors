@@ -1,66 +1,76 @@
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getHumanChoice() {
-  return prompt("Your turn!");
-}
-
-function getComputerChoice() {
-  const randomized = getRandomInt(0, 2);
-  if (randomized == 0) {
-    return "rock";
-  } else if (randomized == 1) {
-    return "paper";
-  } else {
-    return "scissors";
-  }
-}
-
-let humanChoice;
-let computerChoice;
 let humanScore = 0;
 let computerScore = 0;
+let round = 1;
+
+const roundDisplay = document.querySelector(".round");
+const roundResults = document.querySelector(".round-results");
+
+const comScoreSection = document.querySelector(".com");
+const hmnScoreSection = document.querySelector(".hmn");
+
+const rockBtn = document.querySelector("#rock-btn");
+const paperBtn = document.querySelector("#paper-btn");
+const scissorsBtn = document.querySelector("#scissors-btn");
+
+const comScores = document.querySelector(".com-scores");
+const hmnScores = document.querySelector(".hmn-scores");
+
+function getComputerChoice() {
+  return ["rock", "paper", "scissors"][Math.floor(Math.random() * 3)];
+}
+
+roundResults.textContent = "You play first.";
+
+// this is a nested object, used like a lookup table
+const outcomes = {
+  rock: { rock: "tie", paper: "computer", scissors: "human" },
+  paper: { rock: "human", paper: "tie", scissors: "computer" },
+  scissors: { rock: "computer", paper: "human", scissors: "tie" },
+};
 
 function playRound(humanChoice, computerChoice) {
-  // this is a nested object
-  const outcomes = {
-    rock: { rock: "tie", paper: "computer", scissors: "human" },
-    paper: { rock: "human", paper: "tie", scissors: "computer" },
-    scissors: { rock: "computer", paper: "human", scissors: "tie" },
-  };
   const result = outcomes[humanChoice][computerChoice];
-
   if (result === "tie") {
-    alert(
-      `=== TIE! ===\nComputer: ${computerChoice}\nHuman: ${humanChoice}\nCOM ${computerScore} - HMN ${humanScore}`
-    );
+    roundDisplay.textContent = `Round ${round}`;
+    roundResults.textContent = "Tie!";
   } else if (result === "human") {
     humanScore++;
-    alert(
-      `=== HUMAN WON! ===\nComputer: ${computerChoice}\nHuman: ${humanChoice}\nCOM ${computerScore} - HMN ${humanScore}`
-    );
+    hmnScores.textContent = humanScore;
+    roundDisplay.textContent = `Round ${round}`;
+    roundResults.textContent = "Human won!";
   } else {
     computerScore++;
-    alert(
-      `=== COMPUTER WON! ===\nComputer: ${computerChoice}\nHuman: ${humanChoice}\nCOM ${computerScore} - HMN ${humanScore}`
-    );
+    comScores.textContent = computerScore;
+    roundDisplay.textContent = `Round ${round}`;
+    roundResults.textContent = "Computer won!";
+  }
+  round++;
+  checkGameOver();
+}
+
+function checkGameOver() {
+  if (humanScore === 5 || computerScore === 5) {
+    if (humanScore > computerScore) {
+      roundDisplay.textContent = "You won!";
+      comScoreSection.style.cssText = "color: burlywood";
+      hmnScoreSection.style.cssText = "color: teal";
+    } else {
+      roundDisplay.textContent = "You lost…";
+      hmnScoreSection.style.cssText = "color: burlywood";
+      comScoreSection.style.cssText = "color: teal";
+    }
+    rockBtn.disabled = paperBtn.disabled = scissorsBtn.disabled = true;
+    rockBtn.style.opacity =
+      paperBtn.style.opacity =
+      scissorsBtn.style.opacity =
+        0.4;
   }
 }
 
-let i = 0;
-while (humanScore < 5 && computerScore < 5) {
-  alert(`Round ${i + 1}`);
-  humanChoice = getHumanChoice().toLowerCase();
-  computerChoice = getComputerChoice();
-  playRound(humanChoice, computerChoice);
-  i++;
-}
-
-alert(
-  `Final Scores\nCOM ${computerScore} - HMN ${humanScore}\n${
-    humanScore > computerScore ? "You won!" : "Computer won!"
-  }`
+rockBtn.addEventListener("click", () => playRound("rock", getComputerChoice()));
+paperBtn.addEventListener("click", () =>
+  playRound("paper", getComputerChoice())
+);
+scissorsBtn.addEventListener("click", () =>
+  playRound("scissors", getComputerChoice())
 );
